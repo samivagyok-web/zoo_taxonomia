@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { Items as Items1 } from './fejezetek/elso/QuizItems';
+import { Items as Items2 } from "./fejezetek/masodik/QuizItems";
 
-interface QuizItem {
+export interface QuizItem {
   pic: JSX.Element;
   answer: string;
   hint_one?: string;
@@ -9,46 +11,7 @@ interface QuizItem {
 }
 
 function App() {
-  const [data, setData] = useState<QuizItem[]>(
-    [
-      {pic: <img src={require("./assets/xyela.png")}/>, answer: "Xyela"},
-      {pic: <img src={require("./assets/cephus_p.png")}/>, answer: "Cephus Pygmacus"},
-      {pic: <img src={require("./assets/rhogogaster_v.png")}/>, answer: "Rhogogaster viridis"},
-      {pic: <img src={require("./assets/athalia_r.png")}/>, answer: "Athalia Rosae"},
-      {pic: <img src={require("./assets/uroceros_gigas.png")}/>, answer: "Urocerus Gigas"},
-      {pic: <img src={require("./assets/andricus_h.png")}/>, answer: "Andricus hungaricus"},
-      {pic: <img src={require("./assets/andricus_q.png")}/>, answer: "Andricus quercuscalicis"},
-      {pic: <img src={require("./assets/ichneumon.png")}/>, answer: "Ichneumon"},
-      {pic: <img src={require("./assets/rhyssa.png")}/>, answer: "Rhyssa persuasoria"},
-      {pic: <img src={require("./assets/ophion.png")}/>, answer: "Ophion"},
-      {pic: <img src={require("./assets/cotesia.png")}/>, answer: "Cotesia glomerata"},
-      {pic: <img src={require("./assets/chrysis.png")}/>, answer: "Chrysis"},
-      {pic: <img src={require("./assets/megascolia.png")}/>, answer: "Megascolia maculata"},
-      {pic: <img src={require("./assets/mutilla.png")}/>, answer: "Mutilla"},
-      {pic: <img src={require("./assets/pompilus.png")}/>, answer: "Pompilus"},
-      {pic: <img src={require("./assets/eumenes.png")}/>, answer: "Eumenes coarctatus"},
-      {pic: <img src={require("./assets/polistes.png")}/>, answer: "Polistes gallicus"},
-      {pic: <img src={require("./assets/vespula_g.png")}/>, answer: "Vespula germanica"},
-      {pic: <img src={require("./assets/vespula_v.png")}/>, answer: "Vespula vulgaris"},
-      {pic: <img src={require("./assets/vespa_c.png")}/>, answer: "Vespa crabro"},
-      {pic: <img src={require("./assets/monomorium_p.png")}/>, answer: "Monomorium pharaonis"},
-      {pic: <img src={require("./assets/tetramorium_c.png")}/>, answer: "Tetramorium caespitum"},
-      {pic: <img src={require("./assets/formica_c.png")}/>, answer: "Formica cunicularia"},
-      {pic: <img src={require("./assets/formica_r.png")}/>, answer: "Formica rufa"},
-      {pic: <img src={require("./assets/lasius_n.png")}/>, answer: "Lasius niger"},
-      {pic: <img src={require("./assets/ammophila_s.png")}/>, answer: "Ammophila sabulosa"},
-      {pic: <img src={require("./assets/sceliphron_d.png")}/>, answer: "Sceliphron destillatorium"},
-      {pic: <img src={require("./assets/philanthus_t.png")}/>, answer: "Philanthus triangulum"},
-      {pic: <img src={require("./assets/andrena.png")}/>, answer: "Andrena"},
-      {pic: <img src={require("./assets/halictus.png")}/>, answer: "Halictus"},
-      {pic: <img src={require("./assets/megachile.png")}/>, answer: "Megachile"},
-      {pic: <img src={require("./assets/xylocopa_v.png")}/>, answer: "Xylocopa violacea"},
-      {pic: <img src={require("./assets/bombus_p.png")}/>, answer: "Bombus pascuorum"},
-      {pic: <img src={require("./assets/bombus_l.png")}/>, answer: "Bombus lapidarius"},
-      {pic: <img src={require("./assets/bombus_r.png")}/>, answer: "Bombus rupestris"},
-      {pic: <img src={require("./assets/apis_m.png")}/>, answer: "Apis mellifera"},    
-    ]
-  );
+  const [data, setData] = useState<QuizItem[]>([]);
   const [gameData, setGameData] = useState<QuizItem[]>();
   const [gameStarted, setGameStarted] = useState(false);
   const [textValue, setTextValue] = useState("");
@@ -63,14 +26,21 @@ function App() {
     }
   }, [gameData]);
 
-  const startGame = () => {
-    const questions = data.slice();
+  const startGame = (fejezet: number) => {
+    let questions: QuizItem[] = [];
+    
+    if (fejezet == 1) {
+      questions = Items1;
+    } else {
+      questions = Items2;
+    }
 
     for (let i = 0; i < questions.length; i++) {
       const newPos = getRandomInt(0, questions.length - 1);
       swap(questions, i, newPos);
     }
 
+    setData(questions);
     setGameData(questions);
     setGameStarted(true);
   }
@@ -114,14 +84,16 @@ function App() {
     incorrect?.push(gameData[0]);
     setIncorrect(incorrect);
 
-    setTimeout(() => {
+    setInputCol("red");
+    setTextValue(gameData[0].answer);
+  }
+
+  const nextClick = () => {
+      if (!gameData) return;
+
       setGameData(gameData.filter(p => p.answer != gameData[0].answer))
       setTextValue("");
       setInputCol("black");
-    }, 3000);
-
-    setInputCol("red");
-    setTextValue(gameData[0].answer);
   }
 
   const skip = () => {
@@ -161,15 +133,19 @@ function App() {
               )
             })
           }
-          <div style={{display: "flex", justifyContent: "center"}}>
-            <button onClick={() => {setCorrect([]); setIncorrect([]); setGameFinished(false); setGameStarted(true); startGame()}} style={{marginTop: 30, marginBottom: 30}}>Restart</button>
-          </div>          
+          <div style={{marginTop: 200, display: "flex", justifyContent: "center", alignItems: "center", gap: 15}}>            
+            <button onClick={() => {startGame(1)}} className="start">1. fejezet</button>
+            <button onClick={() => {startGame(2)}} className="start">2. fejezet</button>
+          </div>      
         </div>
           :
         (
           gameStarted == false || !gameData 
             ?
-          <button style={{marginTop: 200}} onClick={() => {startGame()}} className="start">Induljon a játék!</button>
+          <div style={{marginTop: 200, display: "flex", justifyContent: "center", alignItems: "center", gap: 15}}>            
+            <button onClick={() => {startGame(1)}} className="start">1. fejezet</button>
+            <button onClick={() => {startGame(2)}} className="start">2. fejezet</button>
+          </div>
             :
           <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
             <div style={{marginBottom: 5, marginTop: 20, fontSize: 20}}>{gameData.length} azonosítatlan faj maradt hátra</div>
@@ -181,7 +157,8 @@ function App() {
 
             <div style={{marginBottom: 80}}>
               <button onClick={() => {skip()}} style={{marginRight: 20}}>Ugorjuk át</button>
-              <button onClick={() => idkClicked()}>Nem tudom</button>
+              <button onClick={() => idkClicked()} style={{marginRight: 20}}>Nem tudom</button>
+              {inputCol == "red" && <button onClick={() => nextClick()}>Következő</button>}              
             </div>
           </div>
         )
