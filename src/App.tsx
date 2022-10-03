@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { Items as Items1 } from './fejezetek/elso/QuizItems';
 import { Items as Items2 } from "./fejezetek/masodik/QuizItems";
+import { Items as Items3 } from "./fejezetek/harmadik/QuizItems";
 
 export interface QuizItem {
   pic: JSX.Element;
@@ -31,8 +32,10 @@ function App() {
     
     if (fejezet == 1) {
       questions = Items1;
-    } else {
+    } else if (fejezet == 2) {
       questions = Items2;
+    } else {
+      questions = Items3;
     }
 
     for (let i = 0; i < questions.length; i++) {
@@ -136,6 +139,7 @@ function App() {
           <div style={{marginTop: 200, display: "flex", justifyContent: "center", alignItems: "center", gap: 15}}>            
             <button onClick={() => {startGame(1)}} className="start">1. fejezet</button>
             <button onClick={() => {startGame(2)}} className="start">2. fejezet</button>
+            <button onClick={() => {startGame(3)}} className="start">3. fejezet</button>
           </div>      
         </div>
           :
@@ -145,6 +149,7 @@ function App() {
           <div style={{marginTop: 200, display: "flex", justifyContent: "center", alignItems: "center", gap: 15}}>            
             <button onClick={() => {startGame(1)}} className="start">1. fejezet</button>
             <button onClick={() => {startGame(2)}} className="start">2. fejezet</button>
+            <button onClick={() => {startGame(3)}} className="start">3. fejezet</button>
           </div>
             :
           <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
